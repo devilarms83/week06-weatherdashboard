@@ -6,11 +6,11 @@
 
   <p align="center">
     <a href="hhttps://devilarms83.github.io/week06-weatherdashboard//">
-        <img src="./assets/images/_.gif" alt="" >
+        <img src="./assets/images/homework-demo.png" alt="" >
     </a>
     <br />
     <br />
-    For Week 6, we're creating a weather dashboard hat will be using the <a href="https://openweathermap.org/api/one-call-api">OpenWeather One Call API</a> to retrieve weather data for cities entered in the input field. The app will run in the browser and feature dynamically updated HTML and CSS>
+    For Week 6, we're creating a weather dashboard hat will be using the <a href="https://openweathermap.org/api/one-call-api">OpenWeather One Call API</a> to retrieve weather data for cities entered in the input field. The app will run in the browser and feature dynamically updated HTML and CSS.
     <br />
     <a href="https://devilarms83.github.io/week06-weatherdashboard//">View Demo</a>
   </p>
