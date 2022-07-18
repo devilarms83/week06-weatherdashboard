@@ -59,7 +59,7 @@ THEN I am again presented with current and future conditions for that city
 * [JQuery v3.2.1](https://jquery.com/)
 * [Moment.js v2.24.0](https://momentjs.com/)
 
-This week, I inserted Bootstrap, Moment.js and javascipt elements to complete the starter code.
+No started code this week so I had to start from scratch. Google is your friend! I primarily used jQuery in javascript along with a few calls of momentjs, styled the app with bootstrap.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
