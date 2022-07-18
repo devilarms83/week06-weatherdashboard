@@ -1,8 +1,8 @@
 $(document).ready(function () {
     
-    $("#searchBtn").on("click", function () {
+    $('#searchBtn').on("click", function () {
         
-        var searchVal = $('#cityInput').val()
+        var searchVal = $('#cityInput').val().toUpperCase
 
         if (!searchVal) {
             return
@@ -23,6 +23,41 @@ $(document).ready(function () {
 
             currentConditions(searchVal)
         }
+    })
+
+    $("#cityInput").keypress(function (event) {
+        var sVal = $('#cityInput').val().toUpperCase()
+        console.log(sVal)
+        var keycode = event.keyCode || event.which
+        if (keycode === 13) {
+
+            if (!sVal) {
+            alert("Input empty!")
+            } else if (searchHist.indexOf(sVal) != -1) {
+                $('#mainDisplay').removeAttr("hidden")
+                currentConditions(sVal)
+                $('#cityInput').val("")
+            } else {
+                $('#mainDisplay').removeAttr("hidden")
+                searchHist.push(sVal)
+                searchHist.sort()
+                localStorage.setItem('prevSearch', JSON.stringify(searchHist))
+                $('#cityInput').val("")
+                $('#prevCities').empty()
+                for (var x = 0; x < searchHist.length; x++){
+                    addCity(searchHist[x])
+                }
+            currentConditions(sVal)
+        }
+        }
+      })
+
+    $('#clearBtn').on("click", function () {
+        clearCurrent()
+        $('#cityDiv').attr("hidden",true)
+        $('#forecastDisplay').attr("hidden",true)
+        localStorage.removeItem('prevSearch')
+        $('#prevCities').empty()
     })
 
     var searchHist = JSON.parse(localStorage.getItem("prevSearch"))|| []
@@ -46,16 +81,18 @@ $(document).ready(function () {
     }
 
     function clearCurrent() {
-        $('#cityName').val("")
-        $('#tempText').text("Temp: ")
-        $('#windText').text("Wind: ")
-        $('#humText').text("Humidity: ")
-        $('#uvStr').text("UV Index:")
+        $('#cityName').text("")
+        $('#tempText').text("")
+        $('#windText').text("")
+        $('#humText').text("")
+        $('#uvStr').text("")
+        $('#forecastDays').empty()
     }
     
     function currentConditions(searchText) {
         clearCurrent()
-
+        $('#cityDiv').attr("hidden",false)
+        $('#forecastDisplay').attr("hidden",false)
         $('#cityName').text(searchText)
 
         $.ajax({
@@ -67,30 +104,32 @@ $(document).ready(function () {
             var lon = currentData[0].lon
 
             $.ajax({
-                url: "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=c7936d34a1de114ab154db84bfde1ac8&units=imperial",
+                url: "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=c7936d34a1de114ab154db84bfde1ac8&units=imperial&exclude=minutely,hourly,alerts",
                 method: "GET",
             }).then(function(conditionData){
                 console.log(conditionData)
                 $('#cityName').append(" (" + moment().format("M/DD/YYYY") + ") " + "<img src='http://openweathermap.org/img/wn/" + conditionData.current.weather[0].icon + ".png'/>")
 
-                $('#tempText').append(conditionData.current.temp + "\u00B0 F")
-                $('#windText').append(conditionData.current.wind_speed + " MPH")
-                $('#humText').append(conditionData.current.humidity + " %")
-                $('#uvStr').append(" <span class='uvColor'>" + conditionData.current.uvi + "</span>")
+                $('#tempText').append("Temp: " + conditionData.current.temp + "\u00B0 F")
+                $('#windText').append("Wind: " + conditionData.current.wind_speed + " MPH")
+                $('#humText').append("Humidity: " + conditionData.current.humidity + " %")
+                $('#uvStr').append("UV Index: <span class='uvColor'>" + conditionData.current.uvi + "</span>")
                 
                 var uvIndex = conditionData.current.uvi
 
                 if (uvIndex <= 2) {
                     $('.uvColor').css({"background-color": "green", "color": "white","padding": "0px 10px"})
                 } else if (uvIndex >= 3 && uvIndex <= 7) {
-                    $('.uvColor').css({"background-color": "yellow", "color": "white","padding": "0px 10px"})
+                    $('.uvColor').css({"background-color": "yellow", "color": "black","padding": "0px 10px"})
                 } else {
                     $('.uvColor').css({"background-color": "red", "color": "white","padding": "0px 10px"})
                 }
-                
 
-                // Append <p> for each element on the 5-day forecast
+                for (var y = 0; y < 5; y++){
+                    $("#forecastDays").append("<li class='px-4 py-2 bg-dark text-light text-left'><h4>" + moment().add(y+1, 'd').format("M/DD/YYYY") + "</h4><p><img src='http://openweathermap.org/img/wn/" + conditionData.daily[y].weather[0].icon + ".png'/></p><p>Temp: " + conditionData.daily[y].temp.day + "\u00B0 F</p><p>Wind: " + conditionData.daily[y].wind_speed + " MPH</p><p>Humidity: " + conditionData.daily[y].humidity + " %</p></li>")
+                }
             })
         })
     }
+
 })
