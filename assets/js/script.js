@@ -12,22 +12,22 @@ $(document).ready(function () {
             return
         } else if (searchHist.indexOf(searchVal) != -1) {
             $('#mainDisplay').removeAttr("hidden")
-            currentConditions(searchVal)
+            weatherConditions(searchVal)
             $('#cityInput').val("")
             $('#validation').text("")
         } else {
             $('#mainDisplay').removeAttr("hidden")
-            searchHist.push(searchVal)
-            searchHist.sort()
-            localStorage.setItem('prevSearch', JSON.stringify(searchHist))
+            // searchHist.push(searchVal)
+            // searchHist.sort()
+            // localStorage.setItem('prevSearch', JSON.stringify(searchHist))
             $('#cityInput').val("")
             $('#validation').text("")
             $('#prevCities').empty()
-            for (var x = 0; x < searchHist.length; x++){
-                addCity(searchHist[x])
-            }
+            // for (var x = 0; x < searchHist.length; x++){
+            //     addCity(searchHist[x])
+            // }
 
-            currentConditions(searchVal)
+            weatherConditions(searchVal)
         }
     })
 
@@ -36,27 +36,8 @@ $(document).ready(function () {
         var sVal = $('#cityInput').val().toUpperCase()
         var keycode = event.keyCode || event.which
         if (keycode === 13) {
-
-            if (!sVal) {
-                $('#validation').text("Search empty or city not found!")
-                $('#validation').css({ 'color': 'red','font-style': 'italic'})
-                return
-            } else if (searchHist.indexOf(sVal) != -1) {
-                $('#mainDisplay').removeAttr("hidden")
-                currentConditions(sVal)
-                $('#cityInput').val("")
-            } else {
-                $('#mainDisplay').removeAttr("hidden")
-                searchHist.push(sVal)
-                searchHist.sort()
-                localStorage.setItem('prevSearch', JSON.stringify(searchHist))
-                $('#cityInput').val("")
-                $('#prevCities').empty()
-                for (var x = 0; x < searchHist.length; x++){
-                    addCity(searchHist[x])
-                }
-            currentConditions(sVal)
-        }
+            
+            weatherConditions(sVal)
         }
       })
 
@@ -75,7 +56,7 @@ $(document).ready(function () {
     if (searchHist.length > 0) {
         $('#mainDisplay').removeAttr("hidden")
         searchHist.sort()
-        currentConditions(searchHist[0])
+        weatherConditions(searchHist[0])
     }
 
     // Loop that creates buttons for stored search history
@@ -85,13 +66,13 @@ $(document).ready(function () {
 
     // Event listener for clicks on the search history buttons
     $('#prevCities').on("click", "button", function() {
-        currentConditions($(this).text())
+        weatherConditions($(this).text())
     })
 
     // Function that creates a button for previous searches
     function addCity(text) {
-        var prevCity = $("<button>").addClass("btn btn-secondary btn-lg my-1 btn-block").text(text)
-        $('#prevCities').append(prevCity)
+        // var prevCity = $("<button>").addClass("btn btn-secondary btn-lg my-1 btn-block").text(text)
+        $('#prevCities').append("<button class='btn btn-secondary btn-lg my-1 btn-block'>" + text + "</button>")
     }
 
     // Function that clears current conditions div
@@ -101,20 +82,27 @@ $(document).ready(function () {
     }
     
     // Function that retrieves API data from openweathermap and displays it on the mainDisplay
-    function currentConditions(searchText) {
+    function weatherConditions(searchText) {
         clearCurrent()
 
         $.ajax({
             url: "https://api.openweathermap.org/geo/1.0/direct?q=" + searchText + "&appid=c7936d34a1de114ab154db84bfde1ac8",
             method: "GET",
         }).then(function (currentData) {
-            console.log(searchText + " " + currentData.length)
+            console.log(searchText + " " + currentData.length )
 
             if (currentData.length === 0 ) {
-                $('#validation').text("Search empty or city not found!")
+                $('#validation').text("City not found!")
                 $('#validation').css({ 'color': 'red','font-style': 'italic'})
-                alert("Stop!")
+                return
             } else {
+
+                if (searchHist.indexOf(searchText) === -1) {
+                    searchHist.push(searchText)
+                    searchHist.sort()
+                    localStorage.setItem('prevSearch', JSON.stringify(searchHist))
+                    addCity(searchText)
+                }
                                             
                 var lat = currentData[0].lat
                 var lon = currentData[0].lon
