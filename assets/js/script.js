@@ -1,5 +1,7 @@
+// Run when document is ready
 $(document).ready(function () {
     
+    // jQuery on click function call - search button
     $('#searchBtn').on("click", function () {
         
         var searchVal = $('#cityInput').val()
@@ -30,6 +32,7 @@ $(document).ready(function () {
         }
     })
 
+    // jQuery keypress function call - 'enter' button for search
     $("#cityInput").keypress(function (event) {
         var sVal = $('#cityInput').val().toUpperCase()
         var keycode = event.keyCode || event.which
@@ -58,6 +61,7 @@ $(document).ready(function () {
         }
       })
 
+    // Clear history button function
     $('#clearBtn').on("click", function () {
         clearCurrent()
         $('#cityDiv').attr("hidden",true)
@@ -67,6 +71,7 @@ $(document).ready(function () {
         $('#validation').text("")
     })
 
+    // Load previous search stored in local
     var searchHist = JSON.parse(localStorage.getItem("prevSearch"))|| []
     if (searchHist.length > 0) {
         $('#mainDisplay').removeAttr("hidden")
@@ -74,19 +79,23 @@ $(document).ready(function () {
         currentConditions(searchHist[0])
     }
 
+    // Loop that creates buttons for stored search history
     for (var x = 0; x < searchHist.length; x++){
         addCity(searchHist[x])
     }
 
+    // Event listener for clicks on the search history buttons
     $('#prevCities').on("click", "button", function() {
         currentConditions($(this).text())
     })
 
+    // Function that creates a button for previous searches
     function addCity(text) {
         var prevCity = $("<button>").addClass("btn btn-secondary btn-lg my-1 btn-block").text(text)
         $('#prevCities').append(prevCity)
     }
 
+    // Function that clears current conditions div
     function clearCurrent() {
         $('#cityName').text("")
         $('#tempText').text("")
@@ -96,6 +105,7 @@ $(document).ready(function () {
         $('#forecastDays').empty()
     }
     
+    // Function that retrieves API data from openweathermap and displays it on the mainDisplay
     function currentConditions(searchText) {
         clearCurrent()
         $('#cityDiv').attr("hidden",false)
@@ -106,7 +116,7 @@ $(document).ready(function () {
             url: "https://api.openweathermap.org/geo/1.0/direct?q=" + searchText + "&appid=c7936d34a1de114ab154db84bfde1ac8",
             method: "GET",
         }).then(function (currentData) {
-            console.log(currentData.status)
+            // console.log(currentData.status)
             
             var lat = currentData[0].lat
             var lon = currentData[0].lon

@@ -23,12 +23,15 @@
         <title>Weather Dashboard</title>
     </head>
     <body >
+        <!-- Header -->
         <header class="py-3 text-center text-light">
             <h1>Weather Dashboard</h1>
         </header>
 
+        <!-- Main Weather Container -->
         <div class="container-fluid">
             <div class="row">
+                <!-- Search and History Sidebar -->
                 <div class="col-md-3 bg-light mt-3" >
                     <p class="h4">Search for a City:<br />
                     <input class="form-control form-control-lg mt-2" type="text" placeholder="Chicago" aria-label="default city" id="cityInput">
@@ -38,6 +41,7 @@
                     <ul class="nav flex-column h4" id="prevCities"></ul>
                 </div>
       
+                <!-- Current Weather Conditions and 5 Day Forecast Section -->
                 <div class="col-md-8 ml-sm-auto col-lg-9 px-3 py-3" id="mainDisplay" hidden>
                     <div class="border border-dark px-2 py-2" id="cityDiv">
                         <h1 class="h2" id="cityName"></h1>
@@ -55,7 +59,7 @@
             </div>
           </div>
 
-
+        <!-- Load jQuery and Momentjs -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
         <script src="./assets/js/script.js"></script>
