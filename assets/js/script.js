@@ -103,7 +103,7 @@ $(document).ready(function () {
         $('#cityName').text(searchText)
 
         $.ajax({
-            url: "http://api.openweathermap.org/geo/1.0/direct?q=" + searchText + "&appid=c7936d34a1de114ab154db84bfde1ac8",
+            url: "https://api.openweathermap.org/geo/1.0/direct?q=" + searchText + "&appid=c7936d34a1de114ab154db84bfde1ac8",
             method: "GET",
         }).then(function (currentData) {
             console.log(currentData.status)
@@ -121,7 +121,7 @@ $(document).ready(function () {
                     method: "GET",
                 }).then(function(conditionData){
                     console.log(conditionData)
-                    $('#cityName').append(" (" + moment().format("M/DD/YYYY") + ") " + "<img src='http://openweathermap.org/img/wn/" + conditionData.current.weather[0].icon + ".png'/>")
+                    $('#cityName').append(" (" + moment().format("M/DD/YYYY") + ") " + "<img src='https://openweathermap.org/img/wn/" + conditionData.current.weather[0].icon + ".png'/>")
     
                     $('#tempText').append("Temp: " + conditionData.current.temp + "\u00B0 F")
                     $('#windText').append("Wind: " + conditionData.current.wind_speed + " MPH")
@@ -139,7 +139,7 @@ $(document).ready(function () {
                     }
     
                     for (var y = 0; y < 5; y++){
-                        $("#forecastDays").append("<li class='px-4 py-2 bg-dark text-light text-left'><h4>" + moment().add(y+1, 'd').format("M/DD/YYYY") + "</h4><p><img src='http://openweathermap.org/img/wn/" + conditionData.daily[y].weather[0].icon + ".png'/></p><p>Temp: " + conditionData.daily[y].temp.day + "\u00B0 F</p><p>Wind: " + conditionData.daily[y].wind_speed + " MPH</p><p>Humidity: " + conditionData.daily[y].humidity + " %</p></li>")
+                        $("#forecastDays").append("<li class='px-4 py-2 bg-dark text-light text-left'><h4>" + moment().add(y+1, 'd').format("M/DD/YYYY") + "</h4><p><img src='https://openweathermap.org/img/wn/" + conditionData.daily[y].weather[0].icon + ".png'/></p><p>Temp: " + conditionData.daily[y].temp.day + "\u00B0 F</p><p>Wind: " + conditionData.daily[y].wind_speed + " MPH</p><p>Humidity: " + conditionData.daily[y].humidity + " %</p></li>")
                     }
                 })
             }
