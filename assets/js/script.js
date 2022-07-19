@@ -4,7 +4,7 @@ $(document).ready(function () {
     // jQuery on click function call - search button
     $('#searchBtn').on("click", function () {
         
-        var searchVal = $('#cityInput').val()
+        var searchVal = $('#cityInput').val().toUpperCase()
 
         if (searchVal == "") {
             $('#validation').text("Search empty or city not found!")
@@ -17,7 +17,6 @@ $(document).ready(function () {
             $('#validation').text("")
         } else {
             $('#mainDisplay').removeAttr("hidden")
-            searchVal.toUpperCase
             searchHist.push(searchVal)
             searchHist.sort()
             localStorage.setItem('prevSearch', JSON.stringify(searchHist))
@@ -97,46 +96,43 @@ $(document).ready(function () {
 
     // Function that clears current conditions div
     function clearCurrent() {
-        $('#cityName').text("")
-        $('#tempText').text("")
-        $('#windText').text("")
-        $('#humText').text("")
-        $('#uvStr').text("")
-        $('#forecastDays').empty()
+        $('#cityDiv').empty()
+        $('#forecastDisplay').empty()
     }
     
     // Function that retrieves API data from openweathermap and displays it on the mainDisplay
     function currentConditions(searchText) {
         clearCurrent()
-        $('#cityDiv').attr("hidden",false)
-        $('#forecastDisplay').attr("hidden",false)
-        $('#cityName').text(searchText)
 
         $.ajax({
             url: "https://api.openweathermap.org/geo/1.0/direct?q=" + searchText + "&appid=c7936d34a1de114ab154db84bfde1ac8",
             method: "GET",
         }).then(function (currentData) {
-            // console.log(currentData.status)
-            
-            var lat = currentData[0].lat
-            var lon = currentData[0].lon
+            console.log(searchText + " " + currentData.length)
 
-            if (currentData.status === 'undefined' || currentData.status === null) {
+            if (currentData.length === 0 ) {
                 $('#validation').text("Search empty or city not found!")
                 $('#validation').css({ 'color': 'red','font-style': 'italic'})
                 alert("Stop!")
             } else {
+                                            
+                var lat = currentData[0].lat
+                var lon = currentData[0].lon
+
                 $.ajax({
                     url: "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=c7936d34a1de114ab154db84bfde1ac8&units=imperial&exclude=minutely,hourly,alerts",
                     method: "GET",
                 }).then(function(conditionData){
                     console.log(conditionData)
-                    $('#cityName').append(" (" + moment().format("M/DD/YYYY") + ") " + "<img src='https://openweathermap.org/img/wn/" + conditionData.current.weather[0].icon + ".png'/>")
+
+                    $('#cityDiv').addClass("border border-dark px-2 py-2")
+
+                    $('#cityDiv').append("<h2>" + searchText + " (" + moment().format("M/DD/YYYY") + ") " + "<img src='https://openweathermap.org/img/wn/" + conditionData.current.weather[0].icon + ".png'/>")
     
-                    $('#tempText').append("Temp: " + conditionData.current.temp + "\u00B0 F")
-                    $('#windText').append("Wind: " + conditionData.current.wind_speed + " MPH")
-                    $('#humText').append("Humidity: " + conditionData.current.humidity + " %")
-                    $('#uvStr').append("UV Index: <span class='uvColor'>" + conditionData.current.uvi + "</span>")
+                    $('#cityDiv').append("<p>Temp: " + conditionData.current.temp + "\u00B0 F</p>")
+                    $('#cityDiv').append("<p>Wind: " + conditionData.current.wind_speed + " MPH</p>")
+                    $('#cityDiv').append("<p>Humidity: " + conditionData.current.humidity + " %</p>")
+                    $('#cityDiv').append("<p>UV Index: <span class='uvColor'>" + conditionData.current.uvi + "</span></p>")
                     
                     var uvIndex = conditionData.current.uvi
     
@@ -147,6 +143,10 @@ $(document).ready(function () {
                     } else {
                         $('.uvColor').css({"background-color": "red", "color": "white","padding": "0px 10px"})
                     }
+
+                    $("#forecastDisplay").prepend("<h2 class='py-2 px-2'>5-Day Forecast</h2>")
+
+                    $("#forecastDisplay").append("<ul class='nav flex-lg-row flex-sm-column justify-content-between' id='forecastDays'></ul>")
     
                     for (var y = 0; y < 5; y++){
                         $("#forecastDays").append("<li class='px-4 py-2 bg-dark text-light text-left'><h4>" + moment().add(y+1, 'd').format("M/DD/YYYY") + "</h4><p><img src='https://openweathermap.org/img/wn/" + conditionData.daily[y].weather[0].icon + ".png'/></p><p>Temp: " + conditionData.daily[y].temp.day + "\u00B0 F</p><p>Wind: " + conditionData.daily[y].wind_speed + " MPH</p><p>Humidity: " + conditionData.daily[y].humidity + " %</p></li>")
